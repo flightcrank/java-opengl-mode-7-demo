@@ -12,6 +12,13 @@ uniform mat2 rotmat;
 uniform float scale;
 uniform float panH;
 uniform float panV;
+uniform float shearH;
+uniform float shearV;
+
+mat2 shear = mat2(
+		1.0, shearH, 
+		shearV, 1.0
+		);
 
 void main(void) {
 	
@@ -29,11 +36,10 @@ void main(void) {
 	
 	//move texture back to original position
 	uv = uv + 0.5;
-
+	
 	//translate tex
 	uv = uv + vec2(panH, panV);
 	
-
-
-
+	//shear
+	uv = uv * shear;
 }

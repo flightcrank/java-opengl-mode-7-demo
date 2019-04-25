@@ -25,7 +25,10 @@ class Renderer implements GLEventListener {
 	float scaleFactor = 0.5f;
 	float panH = 0.0f;
 	float panV = 0.0f;
+	float shearH = 0.0f;
+	float shearV = 0.0f;
 	boolean rot = false;
+	boolean repeat = true;
 	boolean clockwise = true;
  
 	@Override
@@ -49,10 +52,10 @@ class Renderer implements GLEventListener {
 		float vPositions[] = {
 			 
 			//vertex	    //colour	      //tex uvs
-			-0.9f,  0.9f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			 0.9f,  0.9f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-			 0.9f, -0.9f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f
+			-1f,  1f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+			 1f,  1f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			-1f, -1f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+			 1f, -1f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f
 		};
 		
 		int indices[] = {  
@@ -104,16 +107,28 @@ class Renderer implements GLEventListener {
 		// activate texture unit #0 and bind it to the brick texture object
 		gl.glActiveTexture(gl.GL_TEXTURE0);
 		gl.glBindTexture(gl.GL_TEXTURE_2D, texo);
-		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT);
-		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT);
+
+		if (repeat == true) {
+		
+			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
+			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT);
+
+		} else {
+		
+			float borderColor[] = { 1.0f, 0.0f, 1.0f, 1.0f }; // magenta border
+			gl.glTexParameterfv(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_BORDER_COLOR, borderColor, 0);  
+			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_BORDER);
+			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_BORDER);
+		}
+
 		gl.glVertexAttribPointer(2, 2, gl.GL_FLOAT, false, SIZE_OF_FLOAT * 8, SIZE_OF_FLOAT * 6);
 		gl.glEnableVertexAttribArray(2);
 		
 		//draw to the screen
 		gl.glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
-		gl.glPointSize(10.0f);
-		gl.glDrawArrays(gl.GL_POINTS, 0, 4);
+		//gl.glPointSize(10.0f);
+		//gl.glDrawArrays(gl.GL_POINTS, 0, 4);
 		gl.glDrawElements(gl.GL_TRIANGLES, 6, gl.GL_UNSIGNED_INT, 0);
 		
 		//double time = (double) (System.currentTimeMillis() - startTime) / 1000.0;
@@ -129,6 +144,12 @@ class Renderer implements GLEventListener {
 
 		int panVer = gl.glGetUniformLocation(renderingProgram, "panV");
 		gl.glUniform1f(panVer, panV);
+		
+		int shearHor = gl.glGetUniformLocation(renderingProgram, "shearH");
+		gl.glUniform1f(shearHor, shearH);
+		
+		int shearVer = gl.glGetUniformLocation(renderingProgram, "shearV");
+		gl.glUniform1f(shearVer, shearV);
 		
 		if (rot != false) {
 			
