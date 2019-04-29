@@ -24,7 +24,7 @@ class Mode7Demo {
 	private static JSlider slider3;
 	private static JSlider slider4;
 	private static JSlider slider5;
-
+	private static JCheckBox checkBox1;
 
 	private static GLJPanel gljpanel;
 	static FPSAnimator animtr;
@@ -37,7 +37,6 @@ class Mode7Demo {
 			//for linux systems like KDE try to use GTK's looks and feel
 			if (System.getProperty("os.name").equals("Linux")) {
 			
-				//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
 				UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 				
 			} else {
@@ -56,11 +55,6 @@ class Mode7Demo {
 		jframe.pack();
         	jframe.setVisible(true);
 
-		slider1.setValue(0);
-		slider2.setValue(0);
-		slider4.setValue(0);
-		slider5.setValue(0);
-		
 		slider3.addChangeListener(new ChangeListener() {
 		
 			public void stateChanged(ChangeEvent e) {
@@ -69,7 +63,7 @@ class Mode7Demo {
 
 				if (v > 0) {
 					
-					rend.scaleFactor = (float) v / 100;
+					rend.scaleFactor = (float) (v - 50) / 100;
 				}
 			}
 		});
@@ -79,14 +73,10 @@ class Mode7Demo {
 			public void stateChanged(ChangeEvent e) {
 				
 				int v = slider1.getValue();
-				
+
 				if (v > 0) {
 					
-					rend.panH = (float) v / 100;
-				
-				} else {
-					
-					rend.panH = 0;
+					rend.panH = (float) (v - 50) / 100;
 				}
 			}
 		});
@@ -99,11 +89,7 @@ class Mode7Demo {
 				
 				if (v > 0) {
 					
-					rend.panV = (float) v / 100;
-				
-				} else {
-					
-					rend.panV = 0;
+					rend.panV = (float) (v - 50) / 100;
 				}
 			}
 		});
@@ -116,11 +102,7 @@ class Mode7Demo {
 				
 				if (v > 0) {
 					
-					rend.shearH = (float) v / 100;
-				
-				} else {
-					
-					rend.shearH = 0;
+					rend.shearH = (float) (v - 50) / 100;
 				}
 			}
 		});
@@ -133,11 +115,7 @@ class Mode7Demo {
 				
 				if (v > 0) {
 					
-					rend.shearV = (float) v / 100;
-				
-				} else {
-					
-					rend.shearV = 0;
+					rend.shearV = (float) (v - 50) / 100;
 				}
 			}
 		});
@@ -175,6 +153,22 @@ class Mode7Demo {
 			public void actionPerformed(ActionEvent e) {
 				
 				rend.repeat = false;
+			}
+		});
+
+		checkBox1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (checkBox1.isSelected() == true) {
+					
+					rend.scanLineScale = 1.0f;
+				
+				} else {
+					
+					rend.scanLineScale = 0.0f;
+				}
 			}
 		});
 
@@ -243,6 +237,7 @@ class Mode7Demo {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.BOTH;
+		gbc.ipady = 5;
 		gbc.insets = new Insets(5, 5, 5, 5);
 		rootPane.add(settingsPanel, gbc);
 		settingsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Settings", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.TOP));
@@ -429,21 +424,39 @@ class Mode7Demo {
 		gbc.insets = new Insets(0, 5, 5, 5);
 		settingsPanel.add(repeatRadioButton, gbc);
 		final JLabel label9 = new JLabel();
-		label9.setText("Author: Karma Chameleon");
+		Font label9Font = this.$$$getFont$$$(null, Font.BOLD, -1, label9.getFont());
+		if (label9Font != null) label9.setFont(label9Font);
+		label9.setText("Scanline Scaling");
+		gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 10;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.insets = new Insets(0, 5, 5, 5);
+		settingsPanel.add(label9, gbc);
+		checkBox1 = new JCheckBox();
+		checkBox1.setText("");
+		gbc = new GridBagConstraints();
+		gbc.gridx = 1;
+		gbc.gridy = 10;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.insets = new Insets(0, 0, 5, 0);
+		settingsPanel.add(checkBox1, gbc);
+		final JLabel label10 = new JLabel();
+		label10.setText("Author: Karma Chameleon");
 		gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.weighty = 1.0;
 		gbc.anchor = GridBagConstraints.NORTH;
 		gbc.insets = new Insets(0, 10, 10, 10);
-		rootPane.add(label9, gbc);
-		final JLabel label10 = new JLabel();
-		label10.setText(" OpenGL Mode 7 Demo");
+		rootPane.add(label10, gbc);
+		final JLabel label11 = new JLabel();
+		label11.setText(" OpenGL Mode 7 Demo");
 		gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.insets = new Insets(10, 10, 5, 10);
-		rootPane.add(label10, gbc);
+		rootPane.add(label11, gbc);
 		ButtonGroup buttonGroup;
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(clockwiseRadioButton);

@@ -25,6 +25,7 @@ That should compile all necessary .java files. to run the program type the comma
 
 	$ java -cp ../jogl/jar/gluegen-rt.jar:../jogl/jar/jogl-all.jar:./ Mode7Demo
 
-## Images 
+## Images
+![Imgur](https://i.imgur.com/qhvdg7n.png)
+
 ![Imgur](https://i.imgur.com/St0US0Q.gif)
-screenshot

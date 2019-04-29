@@ -22,7 +22,7 @@ class Renderer implements GLEventListener {
 	int texo; //texture buffer object
 	long startTime = System.currentTimeMillis();
 	float a = 0;
-	float scaleFactor = 0.5f;
+	float scaleFactor = 0.1f;
 	float panH = 0.0f;
 	float panV = 0.0f;
 	float shearH = 0.0f;
@@ -30,6 +30,7 @@ class Renderer implements GLEventListener {
 	boolean rot = false;
 	boolean repeat = true;
 	boolean clockwise = true;
+	float scanLineScale = 0.0f;
  
 	@Override
 	public void init(GLAutoDrawable glAutoDrawable) {
@@ -91,6 +92,8 @@ class Renderer implements GLEventListener {
 
 		GL3 gl = glAutoDrawable.getGL().getGL3();
 		
+
+
 		gl.glUseProgram(renderingProgram);
 
 		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, vbo[0]);
@@ -108,6 +111,9 @@ class Renderer implements GLEventListener {
 		gl.glActiveTexture(gl.GL_TEXTURE0);
 		gl.glBindTexture(gl.GL_TEXTURE_2D, texo);
 
+		gl.glVertexAttribPointer(2, 2, gl.GL_FLOAT, false, SIZE_OF_FLOAT * 8, SIZE_OF_FLOAT * 6);
+		gl.glEnableVertexAttribArray(2);
+		
 		if (repeat == true) {
 		
 			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
@@ -121,20 +127,12 @@ class Renderer implements GLEventListener {
 			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_BORDER);
 		}
 
-		gl.glVertexAttribPointer(2, 2, gl.GL_FLOAT, false, SIZE_OF_FLOAT * 8, SIZE_OF_FLOAT * 6);
-		gl.glEnableVertexAttribArray(2);
-		
 		//draw to the screen
 		gl.glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
 		//gl.glPointSize(10.0f);
 		//gl.glDrawArrays(gl.GL_POINTS, 0, 4);
 		gl.glDrawElements(gl.GL_TRIANGLES, 6, gl.GL_UNSIGNED_INT, 0);
-		
-		//double time = (double) (System.currentTimeMillis() - startTime) / 1000.0;
-		//float colVal = (float) (Math.sin(time) / 2.0f) + 0.5f;
-		//int trans = gl.glGetUniformLocation(renderingProgram, "trans");
-		//gl.glUniform3f(trans, 0.5f, 0.0f, 0.0f);
 		
 		int scale = gl.glGetUniformLocation(renderingProgram, "scale");
 		gl.glUniform1f(scale, scaleFactor);
@@ -150,6 +148,14 @@ class Renderer implements GLEventListener {
 		
 		int shearVer = gl.glGetUniformLocation(renderingProgram, "shearV");
 		gl.glUniform1f(shearVer, shearV);
+
+		int sls = gl.glGetUniformLocation(renderingProgram, "scanLineScale");
+		gl.glUniform1f(sls, scanLineScale);
+		
+		int w = glAutoDrawable.getSurfaceWidth();
+		int h = glAutoDrawable.getSurfaceHeight();
+		int res = gl.glGetUniformLocation(renderingProgram, "resolution");
+		gl.glUniform2f(res, (float)w, (float)h);
 		
 		if (rot != false) {
 			
@@ -166,9 +172,6 @@ class Renderer implements GLEventListener {
 		float[] rot = Matrix.rot2D(a);
 		int rotMat = gl.glGetUniformLocation(renderingProgram, "rotmat");
 		gl.glUniformMatrix2fv(rotMat, 1, false, rot, 0);
-
-		//v.vectorRot(.0175, Vector.Z);
-		//System.out.println(v);
 	}
 	
 	@Override
